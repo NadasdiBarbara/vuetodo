@@ -25,7 +25,7 @@
         <td><input type="nunmber" v-model="painting.year"></td>
         <td><input type="checkbox" v-model="painting.on_display"></td>
         <td>
-          <button @click="newwPainting()">Add</button>
+          <button @click="newwPainting()" :disabled="saving" >Add</button>
         </td>
       </tbody>
     </table>
@@ -43,6 +43,7 @@ export default {
   },
   data() {
     return {
+      saving:false,
       painting:{
         id:null,
         title:'',
@@ -69,6 +70,7 @@ export default {
      await this.loadData()
    },
    async newwPainting(){
+     this.saving ="disabled"
       await fetch('http://127.0.0.1:8000/api/paintings',{
         method: 'POST',
         headers:{
@@ -78,6 +80,7 @@ export default {
         body:JSON.stringify(this.painting)
       })
       await this.loadData()
+      this.saving =false
    }
   }
 }
