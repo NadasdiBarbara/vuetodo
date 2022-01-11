@@ -18,6 +18,7 @@
         <td>{{ painting.on_display }}</td>
         <td>
           <button @click="deletePainting(painting.id)">Delete</button>
+          <button @click="editPainting(painting.id)">Edit</button>
         </td>
         </tr>
         <td><input type="hidden" v-model="painting.id"></td>
@@ -25,7 +26,9 @@
         <td><input type="nunmber" v-model="painting.year"></td>
         <td><input type="checkbox" v-model="painting.on_display"></td>
         <td>
-          <button @click="newwPainting()" :disabled="saving" >Add</button>
+          <button v-if="mod_new" @click="newwPainting()" :disabled="saving" >Add</button>
+          <button v-if="!mod_new" @click="savePainting()" :disabled="saving" >Save</button>
+          <button v-if="!mod_new" @click="cancelPainting()" :disabled="saving" >Cancel</button>
         </td>
       </tbody>
     </table>
@@ -43,6 +46,7 @@ export default {
   },
   data() {
     return {
+      mod_new: true,
       saving:false,
       painting:{
         id:null,
@@ -81,7 +85,29 @@ export default {
       })
       await this.loadData()
       this.saving =false
-   }
+   },
+   async editPainting(id){
+      let Response=await fetch(`http://127.0.0.1:8000/api/paintings/${id}`)
+      let data = await Response.json()
+      this.painting={...data}
+      this.mod_new = false
+   },
+   cancelPainting(){
+     this.mod_new = true
+   },
+   async savePainting(){
+     this.saving ="disabled"
+      await fetch(`http://127.0.0.1:8000/api/paintings/${this.painting.id}`,{
+        method: 'PATCH',
+        headers:{
+          'Content-Type':'application/json',
+          'Accept': 'application/json'
+        },
+        body:JSON.stringify(this.painting)
+      })
+      await this.loadData()
+      this.saving =false
+  }
   }
 }
 </script>
