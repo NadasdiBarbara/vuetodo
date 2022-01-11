@@ -23,7 +23,7 @@
         </tr>
         <td><input type="hidden" v-model="painting.id"></td>
         <td><input type="text" v-model="painting.title"></td>
-        <td><input type="nunmber" v-model="painting.year"></td>
+        <td><input type="number" v-model="painting.year"></td>
         <td><input type="checkbox" v-model="painting.on_display"></td>
         <td>
           <button v-if="mod_new" @click="newwPainting()" :disabled="saving" >Add</button>
@@ -65,6 +65,7 @@ export default {
       let data = await Response.json()
       console.log(data)
       this.paintings = data
+      
    } ,
   async deletePainting(id){
      let Response=await fetch(`http://127.0.0.1:8000/api/paintings/${id}`,{
@@ -85,6 +86,7 @@ export default {
       })
       await this.loadData()
       this.saving =false
+      this.resetFrom();
    },
    async editPainting(id){
       let Response=await fetch(`http://127.0.0.1:8000/api/paintings/${id}`)
@@ -94,6 +96,7 @@ export default {
    },
    cancelPainting(){
      this.mod_new = true
+     this.resetFrom();
    },
    async savePainting(){
      this.saving ="disabled"
@@ -107,7 +110,18 @@ export default {
       })
       await this.loadData()
       this.saving =false
+      this.resetFrom();
+  },
+  resetFrom(){
+    this.painting={
+        id:null,
+        title:'',
+        year:'',
+        on_display:false
+        }
+        this.mod_new = true
   }
+
   }
 }
 </script>
