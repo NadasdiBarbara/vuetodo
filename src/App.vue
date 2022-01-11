@@ -71,8 +71,13 @@ export default {
    async newwPainting(){
       await fetch('http://127.0.0.1:8000/api/paintings',{
         method: 'POST',
-        body: JSON.stringify(this.painting)
+        headers:{
+          'Content-Type':'application/json',
+          'Accept': 'application/json'
+        },
+        body:JSON.stringify(this.painting)
       })
+      await this.loadData()
    }
   }
 }
