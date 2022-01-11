@@ -1,32 +1,79 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <table>
+      <thead>
+        <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>On Display</th>
+        <th>Operations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="painting in paintings" v-bind:key="painting.id">
+        <td>{{ painting.id }}</td>
+        <td>{{ painting.title }}</td>
+        <td>{{ painting.year }}</td>
+        <td>{{ painting.on_display }}</td>
+        <td>
+          <button @click="deletePainting(painting.id)">Delete</button>
+        </td>
+        </tr>
+        <td><input type="hidden" v-model="painting.id"></td>
+        <td><input type="text" v-model="painting.title"></td>
+        <td><input type="nunmber" v-model="painting.year"></td>
+        <td><input type="checkbox" v-model="painting.on_display"></td>
+        <td>
+          <button @click="newwPainting()">Add</button>
+        </td>
+      </tbody>
+    </table>
+    <button @click="loadData">Adatok betöltése</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+
   },
   data() {
     return {
-      todos: [
-        {
-          title: 'Első teendő'
-        },
-        {
-          title: 'Második teendő'
-        },
-        {
-          title: 'Harmadik teendő'
-        },
-        ]
+      painting:{
+        id:null,
+        title:'',
+        year:'',
+        on_display:false
+
+      },
+      paintings:[]
     }
+  },
+  methods:{
+   async loadData(){
+    
+      let Response = await fetch('http://127.0.0.1:8000/api/paintings')
+      let data = await Response.json()
+      console.log(data)
+      this.paintings = data
+   } ,
+  async deletePainting(id){
+     let Response=await fetch(`http://127.0.0.1:8000/api/paintings/${id}`,{
+       method:'DELETE'
+     })
+     console.log(Response)
+     await this.loadData()
+   },
+   async newwPainting(){
+      await fetch('http://127.0.0.1:8000/api/paintings',{
+        method: 'POST',
+        body: JSON.stringify(this.painting)
+      })
+   }
   }
 }
 </script>
